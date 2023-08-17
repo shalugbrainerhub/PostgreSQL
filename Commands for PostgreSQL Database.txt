@@ -1,0 +1,70 @@
+Commands for PostgreSQL Database
+======================================================================
+
+
+
+ALTER:
+======
+
+->alter table station
+rename column st_name to name;
+
+->alter table station
+drop st_name;
+
+->alter table station
+add column latitude real;
+
+->alter table station
+rename to station1;
+
+
+INSERTING RECORDS:
+==================
+
+->insert into station1(st_id,name, st_state, st_city) 
+  values(1, 'Delhi Cant', 'New Delhi', 'Delhi'), 
+  (2, 'Agra Cant', 'Uttar Pradesh', 'Agra'), 
+  (3, 'Indore_Station', 'Madhya Pradesh', 'Indore')
+
+
+
+TRIGGER FUNCTION CREATION:
+==========================
+
+->CREATE FUNCTION check_station_name()
+RETURNS TRIGGER
+AS
+$$
+BEGIN
+IF length (NEW.name)<6 OR NEW.name IS NULL THEN
+RAISE EXCEPTION 'Station name does not exist.';
+END If;
+RETURN NEW;
+END;
+$$
+LANGUAGE plpgsql;
+
+
+
+TRIGGER CREATION:
+=================
+
+->CREATE TRIGGER station_name_check
+BEFORE INSERT OR UPDATE
+ON station1
+FOR EACH ROW
+EXECUTE PROCEDURE check_station_name();
+
+
+DROP THE TRIGGER:
+=================
+
+->DROP TRIGGER station_name_check on station1;
+
+
+VIEW:
+=======
+
+->CREATE VIEW station_view AS 
+select st_id, name, st_state from station1;
